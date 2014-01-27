@@ -181,7 +181,7 @@ function table_of_contents_form_field_ui_display_overview_form_alter(&$form, &$f
  * Helper function to clear block cache.
  */
 function table_of_contents_clear_block_cache($form, &$form_state) {
-  _cache_get_object('cache_block')->clear();
+  block_flush_caches();
   drupal_set_message(t('Block caches cleared for Table of Contents.'));
 }
 
