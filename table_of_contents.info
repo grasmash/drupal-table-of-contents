@@ -1,7 +1,7 @@
 name = Table of contents
 description = Auto generate a TOC block based on a text field.
 core = 7.x
-dependencies[] = simplehtmldom
+dependencies[] = simplehtmldom (>=2.x)
 dependencies[] = text
 dependencies[] = block
 dependencies[] = field_formatter_settings

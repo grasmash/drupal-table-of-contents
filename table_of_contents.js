@@ -1,5 +1,5 @@
 (function ($) {
-  Drupal.behaviors.lullabotTOC = {
+  Drupal.behaviors.tableOfContents = {
     /**
      * This assumes that the field is in a container with the class .field-name-{field_name}
      *

@@ -320,3 +320,22 @@ function theme_table_of_contents_item_list(&$variables) {
   $delta = preg_replace('/:/', '_', $variables['delta']);
   return theme('item_list__' . $delta, $variables);
 }
+
+/**
+ * Implements hook_requirements().
+ */
+function table_of_contents_requirements($phase) {
+  $requirements = array();
+  // Ensure translations don't break during installation.
+  $t = get_t();
+  // Report Drupal version
+  if ($phase == 'runtime' && !_simplhtmldom_get_library_path()) {
+    $requirements['simplehtmldom'] = array(
+      'title' => $t('Simple HTML DOM'),
+      'value' => $t('Not found'),
+      'severity' => REQUIREMENT_ERROR,
+      'description' => $t(),
+    );
+  }
+
+}
