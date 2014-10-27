@@ -289,7 +289,7 @@ function _toc_filter($text, $filter, $format, $langcode, $cache, $cache_id) {
     // See if there is a anchor link
     $anchor = $element->find('a.anchor', 0);
     if (empty($anchor)) {
-      $anchor = '<a id="toc-' . drupal_html_id($element->plaintext) . '" class="anchor"></a>';
+      $anchor = '<a id="' . _table_of_contents_get_id($element->plaintext) . '" class="anchor"></a>';
       $element->innertext = $anchor . $element->innertext;
     }
   }
