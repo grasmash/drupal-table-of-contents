@@ -141,7 +141,7 @@ function table_of_contents_block_view($delta = '') {
               'data' => l($data['text'], current_path(), array('fragment' => $id, 'attributes' => array(
                 'class' => $data['class'],
               ))),
-              'class' => array('anchor-list__item'),
+              'class' => array('anchor-list__item', $data['xmltag']),
             );
           }
 
@@ -239,6 +239,7 @@ function _table_of_contents_get_elements($field_data, $entity_type, $entity_id, 
         }
         $ids[$id]['id'] = $id;
         $ids[$id]['text'] = $header_obj->plaintext;
+        $ids[$id]['xmltag'] = $header_obj->tag;
       }
     }
   }
