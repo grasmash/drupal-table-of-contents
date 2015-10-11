@@ -44,12 +44,14 @@ function table_of_contents_field_formatter_settings_form_alter(&$settings_form, 
  */
 function table_of_contents_field_formatter_settings_summary_alter(&$summary, $context) {
   // Get all the field types declared by the text module
-  $text_types = array_keys(text_field_info());
-  if (in_array($context['field']['type'], $text_types)) {
-    $summary .= ' ' . t('TOC block %status. Selector: %selector', array(
-      '%status' => empty($context['instance']['display'][$context['view_mode']]['settings']['toc_block']) ? t('disabled') : t('enabled'),
-      '%selector' => $context['instance']['display'][$context['view_mode']]['settings']['toc_selector'],
-    ));
+  if (isset($context['field']['type'])) {
+    $text_types = array_keys(text_field_info());
+    if (in_array($context['field']['type'], $text_types)) {
+      $summary .= ' ' . t('TOC block %status. Selector: %selector', array(
+        '%status' => empty($context['instance']['display'][$context['view_mode']]['settings']['toc_block']) ? t('disabled') : t('enabled'),
+        '%selector' => $context['instance']['display'][$context['view_mode']]['settings']['toc_selector'],
+      ));
+    }
   }
 }
 
