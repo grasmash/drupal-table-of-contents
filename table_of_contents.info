@@ -5,3 +5,4 @@ dependencies[] = simplehtmldom (>=2.x)
 dependencies[] = text
 dependencies[] = block
 dependencies[] = field_formatter_settings
+dependencies[] = entity
