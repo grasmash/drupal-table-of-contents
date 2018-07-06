@@ -165,15 +165,29 @@ function table_of_contents_block_view($delta = '') {
             );
           }
 
+          try {
+            $wrapper = entity_metadata_wrapper($entity_type, $entity);
+
+            $can_access_field = $wrapper->{$field_name}->access('view');
+            $can_access_entity = $wrapper->access('view');
+
+            $has_access = ($can_access_field && $can_access_entity);
+          }
+          catch (\EntityMetadataWrapperException $e) {
+            $has_access = FALSE;
+          }
+
           $block = array(
             'subject' => t('Table of contents'),
-            'content' => theme('table_of_contents_item_list', array(
-              'items' => $items,
-              'attributes' => array(
+            'content' => array(
+              '#theme' => 'table_of_contents_item_list',
+              '#items' => $items,
+              '#attributes' => array(
                 'class' => array('anchor-list'),
               ),
-              'delta' => $delta,
-            )),
+              '#delta' => $delta,
+              '#access' => $has_access,
+            ),
           );
         }
       }
