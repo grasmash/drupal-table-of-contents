@@ -70,7 +70,7 @@ function table_of_contents_field_formatter_view($entity_type, $entity, $field, $
     foreach ($html->find($selector) as $tag) {
       $anchor = $tag->find('a.toc-anchor', 0);
       if (empty($anchor)) {
-        $id = _table_of_contents_get_id($tag);
+        $id = _table_of_contents_get_id($tag, 'view');
         $anchor = '<a id="' . $id . '" class="toc-anchor" title="Permalink to this headline" href="#' . $id . '"></a>';
         $tag->innertext = $anchor . $tag->innertext;
       }
@@ -242,20 +242,12 @@ function _table_of_contents_get_elements($field_data, $entity_type, $entity_id, 
         $html_obj->load($text);
       }
       foreach ($html_obj->find($selector) as $header_obj) {
+        // If an id wasn't manually hardcoded, add one.
         if (empty($header_obj->id)) {
-          // If there's no id to link to we cannot generate it and reload the
-          // node since we don't know what the input format may be (markdown,
-          // HTML, textile, ...
-          watchdog('table_of_contents', t('A node without an ID was found in entity %type::%id. Please add the HTML id to make it appear in the table of contents.', array(
-            '%type' => $entity_type,
-            '%id' => $entity_id,
-          )));
-          // Add a special class to allow JS to pick it from here.
-          $id = _table_of_contents_get_id($header_obj);
+          $id = _table_of_contents_get_id($header_obj, 'toc');
           $ids[$id] = array(
             'class' => array('toc-link', 'toc-link-invalid-id'),
           );
-
         }
         else {
           $id = $header_obj->id;
@@ -273,19 +265,50 @@ function _table_of_contents_get_elements($field_data, $entity_type, $entity_id, 
 }
 
 /**
- * Helper function to get the ID of the HTML node or generate a unique one.
+ * Helper function to get a unique HTML id for a header.
  *
  * @param simple_html_dom_node $header_obj
  *   simple_html_dom object representing the HTML node selected as title for the TOC.
  * @return string
  *   The recovered or generated id.
  */
-function _table_of_contents_get_id(simple_html_dom_node $header_obj) {
+function _table_of_contents_get_id(simple_html_dom_node $header_obj, $context) {
+  $generated_ids = &drupal_static(__FUNCTION__);
+  if (!isset($generated_ids[$context])) {
+    $generated_ids[$context] = [];
+  }
+
+  $id = _table_of_contents_generate_id($header_obj);
+  // Ensure header is unique within context. E.g, unique within rendered html
+  // or unique with TOC list.
+  if (array_search($id, $generated_ids[$context])) {
+    $id_len = strlen($id);
+    $num = 0;
+    while (array_search($id, $generated_ids[$context])) {
+      $id = substr($id, 0, $id_len) . '-' . $num;
+      $num++;
+    }
+  }
+
+  $generated_ids[$context][] = $id;
+
+  return $id;
+}
+
+/**
+ * Helper function to generate an HTML id for header.
+ *
+ * @param \simple_html_dom_node $header_obj
+ *
+ * @return string
+ */
+function _table_of_contents_generate_id(simple_html_dom_node $header_obj) {
   $text = $header_obj->plaintext;
   $id = drupal_clean_css_identifier($text);
   $id = strtolower($id);
   // Set maximum 100 character limit.
   $id = substr($id, 0, 100);
+
   return $id;
 }
 
